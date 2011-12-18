@@ -1,0 +1,65 @@
+<html>
+<head>
+<title>Automated SMS System Interface</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<div align="center"> <h1> Query to System </h1></div>
+
+<div style="background-color:#FFD700; width:280px; height100px; float:top;text-align:center;">
+<form name="query_form" action="send_to_system.php" method="post">
+	<div>
+		Query: <input type:"text" name="query" /> <br />
+	</div>
+	<div>
+		<input type="submit" value="Send" />
+	<div>
+</form>
+</div>
+<br />
+<br />
+
+<div>
+<form name="halt_system" action="halt.php" method="post">
+	<div>
+		Send halt command:<br />
+			<input type="submit" value="Halt!" />
+	</div>
+</form>
+</div>
+
+<br />
+<div style="background-color:#6495ED; width:680px; height:400px; float:left;text-align:center;">
+<form name="cmd_form" action="send_to_system2.php" method="post">
+		<table border="1">
+		  <tr>
+		    <td>ID:  <input type:"text" name="ID" /> <br /></td>
+			<td> WEB: 100; ASTERISK: 101; ALARMS: 102 (internal use); MANAGER:105</td>
+		  </tr>
+		  <tr>
+			<td>CMD: <input type:"text" name="CMD" /> <br /></td>
+		    <td>"halt, "clean_log, "send_sms" (depend of the ID; all commands without quotes)</td>
+		  </tr>
+		<tr>
+			<td>-INFO TAG-<br />
+				FROM:<input type:"text" name="FROM" /> <br />
+				CONTENT:<input type:"text" name="CONTENT" /> <br />
+				HOWMANY:<input type:"text" name="HOWMANY" /> <br />
+				BLOW:<input type:"text" name="BLOW" /> <br />
+				</td>
+			<td> FROM (ex.:\FROM:your_name/FROM)<br /><br />CONTENT (ex.:\CONTENT:the mesage to be send/CONTENT)<br /><br />HOWMANY (ex.:\HOWMANY:3/HOWMANY)<br /><br />BLOW (ex.:\BLOW:2011:25:11-15:30:56/BLOW)</td>
+		</tr>
+		<tr>
+			<td>DATA: <input type:"text" name="DATA" /> <br /></td>
+			<td>PARTN (depends of HOWMANY has been set; \PART1:99190721/PART1\PARTN:23125652/PARTN</td>
+		</tr>
+		<tr>
+			<th><input type="submit" value="Send" /></th>
+		</tr>
+</form>
+</div>
+
+</body>
+
+</html>
