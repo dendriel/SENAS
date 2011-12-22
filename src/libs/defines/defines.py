@@ -4,6 +4,13 @@ ERROR    = 	-1
 INVALID  = 	-2
 NOTFOUND = 	-4
 
+# LIST OF IDs #
+WEB = 		100
+ASTERISK = 	101
+ALARMS = 	102
+MANAGER = 	105
+SYSTEM = 	200
+
 # TAGS #
 TAG_ID = 	"ID"
 TAG_CMD = 	"CMD"
@@ -16,7 +23,6 @@ TAG_BLOW = 	"BLOW"
 TAG_PART = 	"PART"
 
 # DATA #
-
 DATA_ORG 	= "org"
 DATA_MSG 	= "msg"
 DATA_BLOW 	= "blow"
@@ -33,12 +39,6 @@ LOG_CRITICAL = 12
 MAX_CONNECTIONS = 5
 MSG_SIZE = 1024
 
-# LIST OF IDs #
-WEB = 		100
-ASTERISK = 	101
-ALARMS = 	102
-MANAGER = 	105
-SYSTEM = 	200
 
 # FILE NAMES #
 SMS_LOGNAME = 	"sms.log"
@@ -55,10 +55,11 @@ TABLE_USER = "user"
 TABLE_SMS  = "sms"
 
 # LIST OF COMMANDS #
-CMD_HALT = 	"halt"
-CMD_CLEAN_LOG = "clean_log"
-CMD_SEND_SMS = 	"send_sms"
-CMD_LOGIN = 	"login"
+CMD_HALT 	= "halt"
+CMD_CLEAN_LOG 	= "clean_log"
+CMD_SEND_SMS 	= "send_sms"
+CMD_LOGIN 	= "login"
+CMD_BLOW 	= "blow"
 
 # LIST OF ALARMS STATE #
 ACTIVE = 	0
@@ -66,3 +67,6 @@ CANCELED = 	1
 FAILED = 	2
 SENT = 		3
 
+# GSM COMMUNICATION #
+GSM_ATCOM 	= 20
+GSM_ASTERISK 	= 21

@@ -1,4 +1,5 @@
 import time
+import socket
 from mx.DateTime import now
 from libs.defines.defines import *
 from libs.shared.shared import *
@@ -21,19 +22,21 @@ class alarm:
 
 		try:
 			sleep_time = int(blow - now())
-
 			self.log.LOG(LOG_INFO, "alarm", "New alarm has been scheduled. Blow date/time in %s. It's take %d seconds from now." % (blow, sleep_time))
-
 			time.sleep(sleep_time)
+			
+			channel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                        channel.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)	
+			package = "\ID:102/ID\CMD:blow/CMD\CONTENT:%s/CONTENT\HOWMANY:1/HOWMANY\DATA:\PART0:%s/PART0/DATA" % (content, destination)
+			channel.send(package)
+			self.log.LOG(LOG_INFO, "alarm", "An alarm thread has been finished.")
 
-			self.log.LOG(LOG_INFO, "alarm", "THE ALARM HAS EXPLODED!!!.")
+		except socket.error, msg:
+			self.channel.close()
+			self.log.LOG(LOG_CRITICAL, "alarm.launch()", "The scheduled alarm failed to contact the system. Error: %s" % msg)	
 
 		except:
 			self.log.LOG(LOG_CRITICAL, "alarm.launch()", "The alarm thread has a problem and will be aborted.")	
-	# open a connection with the main system #
-	# ask the system to send the content #
-	# and.. die =]
-	
 ##
 # Brief: Mounts a dictionary with the content of 
 #	TAGs in the data package.

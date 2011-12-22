@@ -1,3 +1,4 @@
+#! /usr/bin/python
 # -*-coding:utf-8-*-
 import socket
 import sys
@@ -8,6 +9,7 @@ from libs.defines.defines import *
 from libs.alarm.alarm import alarm
 from libs.shared.shared import shared
 from libs.dbcom.dbcom import dbcom
+from libs.gsmcom.Atcom import Atcom
 from interfaces.Manager import Manager
 from interfaces.Web import Web
 
@@ -19,12 +21,13 @@ class sms:
 # Param: port The port to listen for connections
 # Param: log The path to the log file
 ##
-	def __init__(self, address, port, log):
+	def __init__(self, address, port, log, gsmComType):
 
 		self.address = address
 		self.port = port
 		self.channel = '' 
 		self.alarm_list = [] 
+		self.gsmcom = ''
 		self.log_path_list = {SMS_LOGNAME:"%s/%s" % (log, SMS_LOGNAME), ALARM_LOGNAME:"%s/%s" % (log, ALARM_LOGNAME), DBCOM_LOGNAME:"%s/%s" % (log, DBCOM_LOGNAME)}
 
 		try:
@@ -33,6 +36,15 @@ class sms:
 			self.dbcom = dbcom(DB_HOST, DB_USER, DB_PASS, DB_NAME, self.log_path_list[DBCOM_LOGNAME])
 			self.manager = Manager(self.log_path_list[SMS_LOGNAME], self.log_path_list[ALARM_LOGNAME])
 			self.web = Web(self.log_path_list[SMS_LOGNAME], self.dbcom)
+			if gsmComType == GSM_ATCOM:
+				self.gsmcom = Atcom()
+
+			elif gsmComType == GSM_ASTERISK:
+				raise Exception
+
+			else:
+				raise Exception
+
 		except:
 			print "Failed to create one of the objects."
 			sys.exit(0)
@@ -130,7 +142,7 @@ class sms:
 				return OK
 
 			elif CID == ALARMS:
-				self.sendSMS()
+				self.doAlarmAction(cmsg, client_channel)
 				self.log.LOG(LOG_INFO, "sms.processMessage()", "Message from ALARMS client was received.")
 				return OK
 
@@ -182,14 +194,35 @@ class sms:
 		if CMD == CMD_LOGIN:
 			answer = self.web.ActionLogin(cmsg)
 			self.__sendMessage(client_channel, "%s" % answer)
+			client_channel.close()
 
 		elif CMD == CMD_SEND_SMS:
 			answer = self.manager.actionScheduleAlarm(cmsg, self.dbcom)
 			self.__sendMessage(client_channel, "%s" % answer)
+			client_channel.close()
 
 		else:
-			self.log.LOG(LOG_ERROR, "sms", "Error while reading web request. Unknow command: %s" % CMD)
-			
+			self.log.LOG(LOG_ERROR, "sms", "Error while reading web request. Unknow command: %s" % CMD)			
+			self.__sendMessage(client_channel, "%s" % NOTFOUND)
+			client_channel.close()
+##
+# Brief: Process the ALARMS requisitons.
+##
+	def doAlarmAction(self, cmsg, client_channel):
+
+		CMD = self.shared.splitTag(cmsg, TAG_CMD)
+
+		if CMD == CMD_BLOW:
+			content = self.shared.splitTag(cmsg, TAG_CONTENT)
+			destination = self.shared.splitTag(cmsg, TAG_PART, 0)
+			answer = self.gsmcom.sendSMS(destination, content)
+			print answer
+			self.log.LOG(LOG_INFO, "sms", "SMS sent!")
+			client_channel.close()
+
+		else:
+			self.log.LOG(LOG_ERROR, "sms", "Error while reading alarm request. Unknow command: %s:" % CMD)
+			client_channel.close()
 ##
 # Brief: Send SMS to destination. But will need some processing before sending the sms.
 # param: extension The fone number of the receiver.
@@ -222,7 +255,7 @@ if __name__ == "__main__":
 	bind_port = 3435
 	log_path = "log"
 
-	system = sms(bind_address, bind_port, log_path)
+	system = sms(bind_address, bind_port, log_path, GSM_ATCOM)
 	system.start()
 #---------------------------------------------------------#
 
