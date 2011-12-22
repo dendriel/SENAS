@@ -37,7 +37,7 @@ class sms:
 			self.manager = Manager(self.log_path_list[SMS_LOGNAME], self.log_path_list[ALARM_LOGNAME])
 			self.web = Web(self.log_path_list[SMS_LOGNAME], self.dbcom)
 			if gsmComType == GSM_ATCOM:
-				self.gsmcom = Atcom()
+				self.gsmcom = Atcom(logname=self.log_path_list[SMS_LOGNAME], atLogPath=log)
 
 			elif gsmComType == GSM_ASTERISK:
 				raise Exception

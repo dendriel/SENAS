@@ -50,7 +50,7 @@ class Manager:
 		ret = dbcom.registerSMS(sms_dict[DATA_ORG], sms_dict[DATA_EXT+"0"], sms_dict[DATA_BLOW], sms_dict[DATA_OPER], sms_dict[DATA_MSG], activity)
 
 		if ret == OK and activity == ACTIVE:
-			alarm_thread = Thread(target=self.alarm.launch, args=(blow,))
+			alarm_thread = Thread(target=self.alarm.launch, args=(sms_dict[DATA_ORG], sms_dict[DATA_EXT+"0"], sms_dict[DATA_MSG], blow,))
 			alarm_thread.start()
 			self.log.LOG(LOG_INFO, "sms", "New alarm thread has been started.")
 			return "OK"
