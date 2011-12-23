@@ -108,6 +108,8 @@ class Atcom:
 		if self._open_port() == ERROR:
 			return ERROR
 		
+		# Clear the content of the rx buffer #
+		self._read()
 		# Setting something important #
 		self._send("AT+CMGF=1")
 		# Starting the command #
@@ -115,12 +117,15 @@ class Atcom:
 		# Writing the content #
 		self._send("%s" % content)
 		# Confirm the command #
-		self.send("\032")
+		self._send("\032")
 
 		answer = self._read()
 
-		if answer.find("CMGS: 69") < 0:
+		if answer.find("ERROR") > 0: #|| answer.find("+CMGS: 73") < 0:
+			self.atlog.LOG(LOG_ERROR, "gsmcom.sendSMS()", "Unexpected answer from module. Content: %s" % answer)
 			return INVALID
+
+		self.atlog.LOG(LOG_INFO, "gsmcom.sendSMS()", "Answer: %s" % answer)
 
 		self._close_port()
 		return OK

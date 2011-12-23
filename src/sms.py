@@ -81,6 +81,7 @@ class sms:
 			self.channel.close()
 			self.log.LOG(LOG_CRITICAL, "sms.checkConnection()", "Failed to set the database connection. Aborting the system startup.")
 			exit(-1)
+
 		else:
 			self.log.LOG(LOG_INFO, "sms", "Database access is OK.") 
 
@@ -88,6 +89,7 @@ class sms:
 			self.channel.close()
 			self.log.LOG(LOG_CRITICAL, "sms.checkConnection()", "Failed to check the default tables of the database. Aborting the system startup.")
 			exit(-1)
+
 		else:
 			self.log.LOG(LOG_INFO, "sms", "Tables of the database are OK.") 
 ##
@@ -98,7 +100,7 @@ class sms:
 		while True:
 			try:
 				(client_channel, address) = self.channel.accept()
-				self.log.LOG(LOG_INFO, "sms.lookForConnection()", "Client from %s has been connected." % str(address))
+				self.log.LOG(LOG_INFO, "sms", "Client from %s has been connected." % str(address))
 
 			except socket.error, emsg:
 				self.log.LOG(LOG_ERROR, "sms.lookForConnection()", "lookForConnection()", "Failed to receive client connection. Error: %s" % str(emsg))
@@ -113,7 +115,7 @@ class sms:
 					self.log.LOG(LOG_ERROR, "sms.lookForConnection()", "Message from %s can not be processed." % str(address))
 				elif result == INVALID:
 					self.log.LOG(LOG_INFO, "sms.lookForConnection()", "Unknow client attempted to send a command, but the package was dropped.")
-				
+
 				client_channel.close()
 
 			except socket.error, emsg:
@@ -216,22 +218,15 @@ class sms:
 			content = self.shared.splitTag(cmsg, TAG_CONTENT)
 			destination = self.shared.splitTag(cmsg, TAG_PART, 0)
 			answer = self.gsmcom.sendSMS(destination, content)
-			print answer
-			self.log.LOG(LOG_INFO, "sms", "SMS sent!")
+
+			self.__sendMessage(client_channel, "%d" % answer)
+				
 			client_channel.close()
 
 		else:
 			self.log.LOG(LOG_ERROR, "sms", "Error while reading alarm request. Unknow command: %s:" % CMD)
+			self.__sendMessage(client_channel, "%s" % ERROR)
 			client_channel.close()
-##
-# Brief: Send SMS to destination. But will need some processing before sending the sms.
-# param: extension The fone number of the receiver.
-# param: content The content to be send.
-##
-	def sendSMS(self, extension, content):
-
-		self.log.LOG(LOG_CRITICAL, "sms.sendSMS()", "A SMS was be sent.")
-		pass
 ##
 # Brief: Send message in the channel.
 # Param: channel The destination to the message.

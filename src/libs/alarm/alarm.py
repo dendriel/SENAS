@@ -28,11 +28,12 @@ class alarm:
 			channel.connect(("127.0.0.1", SYSTEM_PORT))
 			package = "\ID:102/ID\CMD:blow/CMD\CONTENT:%s/CONTENT\HOWMANY:1/HOWMANY\DATA:\PART0:%s/PART0/DATA" % (content, destination)
 			channel.send(package)
-			self.log.LOG(LOG_INFO, "alarm", "An alarm thread has been finished.")
-			channel.close()
+
+			status = int(channel.recv(MSG_SIZE))
+			self.log.LOG(LOG_INFO, "alarm", "Alarm thread finished with status: %s." % RETURN[status])
 
 		except socket.error, msg:
-			self.log.LOG(LOG_CRITICAL, "alarm.launch()", "The scheduled alarm failed to contact the system. Error: %s" % msg)	
+			self.log.LOG(LOG_CRITICAL, "alarm.launch()", "The scheduled alarm failed to contact the system. Error: %s" % msg)
 			channel.close()
 
 		except:
