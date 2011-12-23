@@ -101,7 +101,8 @@ class Atcom:
 # Param: destination The destination extension to were
 #	the sms will be sent.
 # Param: content The message that the sms will load.
-# Return: Just OK for now.
+# Return: OK if the alarm was sent; ERROR in whatever
+#	other case.
 ##
 	def sendSMS(self, destination, content):
 

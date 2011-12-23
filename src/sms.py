@@ -21,7 +21,7 @@ class sms:
 # Param: port The port to listen for connections
 # Param: log The path to the log file
 ##
-	def __init__(self, address, port, log, gsmComType):
+	def __init__(self, address, port, log, gsm_com_type):
 
 		self.address = address
 		self.port = port
@@ -36,10 +36,10 @@ class sms:
 			self.dbcom = dbcom(DB_HOST, DB_USER, DB_PASS, DB_NAME, self.log_path_list[DBCOM_LOGNAME])
 			self.manager = Manager(self.log_path_list[SMS_LOGNAME], self.log_path_list[ALARM_LOGNAME])
 			self.web = Web(self.log_path_list[SMS_LOGNAME], self.dbcom)
-			if gsmComType == GSM_ATCOM:
+			if gsm_com_type == GSM_ATCOM:
 				self.gsmcom = Atcom(logname=self.log_path_list[SMS_LOGNAME], atLogPath=log)
 
-			elif gsmComType == GSM_ASTERISK:
+			elif gsm_com_type == GSM_ASTERISK:
 				raise Exception
 
 			else:
@@ -56,6 +56,9 @@ class sms:
 		self.log.LOG(LOG_INFO, "sms", "Starting the system.")
 		self.checkConnection()
 		self.log.LOG(LOG_INFO, "sms", "System started.")
+
+		self.dbcom.getHigherCounter()
+
 		self.lookForConnection()
 		self.channel.close
 		sys.exit(0)
@@ -217,15 +220,22 @@ class sms:
 		if CMD == CMD_BLOW:
 			content = self.shared.splitTag(cmsg, TAG_CONTENT)
 			destination = self.shared.splitTag(cmsg, TAG_PART, 0)
+			counter = int(self.shared.splitTag(cmsg, TAG_FROM))
 			answer = self.gsmcom.sendSMS(destination, content)
+		
+			if answer == OK: 
+				self.dbcom.changeAlarmStatus(counter, SENT)
+
+			elif answer == ERROR or answer == INVALID:
+				self.dbcom.changeAlarmStatus(counter, FAILED)
 
 			self.__sendMessage(client_channel, "%d" % answer)
-				
 			client_channel.close()
 
 		else:
 			self.log.LOG(LOG_ERROR, "sms", "Error while reading alarm request. Unknow command: %s:" % CMD)
 			self.__sendMessage(client_channel, "%s" % ERROR)
+			self.dbcom.changeAlarmStatus(counter, FAILED)
 			client_channel.close()
 ##
 # Brief: Send message in the channel.

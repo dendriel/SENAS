@@ -16,7 +16,7 @@ class alarm:
 # Brief: The alarm function will need do calculation about the time to sleep, and
 # when he wake up will need to send data to main system, asking for the alarm to blow.
 ##
-	def launch(self, orig, destination, content, blow):
+	def launch(self, orig, destination, content, blow, counter):
 	#def launch(self, blow):
 
 		try:
@@ -26,7 +26,7 @@ class alarm:
 			
 			channel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			channel.connect(("127.0.0.1", SYSTEM_PORT))
-			package = "\ID:102/ID\CMD:blow/CMD\CONTENT:%s/CONTENT\HOWMANY:1/HOWMANY\DATA:\PART0:%s/PART0/DATA" % (content, destination)
+			package = "\ID:102/ID\CMD:blow/CMD\CONTENT:%s: %s/CONTENT\HOWMANY:1/HOWMANY\DATA:\PART0:%s/PART0/DATA\FROM:%d/FROM" % (orig, content, destination, counter)
 			channel.send(package)
 
 			status = int(channel.recv(MSG_SIZE))

@@ -67,7 +67,8 @@ class dbcom:
 #	is incorrect; ERROR if there is an error.
 ##
 	def validateLogin(self, user, passwd):
-		content = self.__retrieve("login, passwd", TABLE_USER)
+
+		content = self.__retrieve(TABLE_USER, "login, passwd")
 		if content == ERROR:
 			return ERROR
 		else:
@@ -92,10 +93,40 @@ class dbcom:
 #	in defines.py)
 # Return: OK if the alarm was registered; ERROR
 #	if a problem has ocurred.
+# Note: The right name should be registerAlarm
 ##
 	def registerSMS(self, orig, dest, blow, oper, msg, stat):
+
 		answer = self.__insert(TABLE_SMS, "(orig, dest, msg, oper, blow, stat)", "('%s', '%s', '%s', '%d', '%s', '%d')" % (orig, dest, msg, oper, blow, stat))
 		return answer
+##
+# Brief: Change the status of an Alarm.
+# Param: identifier The counter number that the database
+#	automaticlly inserts into the table.
+# Return: OK if the alarm status could be changed; 
+#	ERROR if something went wrong.
+# Note: Adapt to interpret the mysql error and add "NOTFOUND 
+#	if the alarm does not exist;"
+##
+	def changeAlarmStatus(self, identifier, new_status):
+
+		answer = self.__update(TABLE_SMS, "stat = %d" % new_status, "count = %d" % identifier)
+		return answer
+##
+# Brief: Search for the last alarm inserted into the table.
+# Return: The most higher counter found in the table.
+##
+	def getHigherCounter(self):
+
+		counters_list = self.__retrieve(TABLE_SMS, "count")
+
+		higher = -1
+	
+		for it in counters_list:
+			if it['count'] > higher:
+				higher = it['count']
+
+		return higher
 ##
 # Brief: Create specified table structure in database.
 # Param: table_type The pre-defined type of the table
@@ -199,7 +230,7 @@ class dbcom:
 # Return: A dictionary with the solicited data; ERROR if
 #	anything went wrong.
 ##
-	def __retrieve(self, content, table):
+	def __retrieve(self, table, content):
 
 		if self.__connect(cursor_type=MySQLdb.cursors.DictCursor) == ERROR:
 			return ERROR
@@ -240,4 +271,28 @@ class dbcom:
 
 		self.__disconnect()
 		return OK
+##
+# Brief: Update information in the specified table.
+# Param: table The table to be updated.
+# Param: new_content The content that will be inserted.
+# Param: ref The reference for the tuple where the the
+#	content will be changed.
+# Return: OK if the content could be changed; ERROR if
+#	something went wrong.
+##
+	def __update(self, table, new_content, ref):
 
+		if self.__connect() == ERROR:
+			return ERROR
+
+		query = "UPDATE %s SET %s WHERE %s" % (table, new_content, ref)
+		try:
+			self.cursor.execute(query)
+
+		except MySQLdb.Error, msg:
+                        self.log.LOG(LOG_ERROR, "dbcom"," Failed to update content from database. Error: %d: %s" % msg.args)
+			return ERROR
+
+		self.log.LOG(LOG_INFO, "dbcom", "Query executed to the database: %s" % query)
+		self.__disconnect()
+		return OK
