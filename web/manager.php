@@ -77,7 +77,7 @@
          </td>
         </tr>
         <tr>
-         <td><input type="submit" value="Desligar" /></td>
+         <td><input type="submit" value="Apagar" /></td>
         </tr>
     </form>
    </table>
@@ -85,15 +85,27 @@
 
   <td> <!-- start of col 2 -->
    <table class="subtable">
-    <form name="clean_log" action="send_sms.php" method="post">
+    <form name="send_sms" action="send_sms.php" method="post">
         <tr>
-         <td align="center"><input type="submit" value="Enviar SMS" style="float:center"/></td>
+	 <td>Agendar SMS</td>
+	</tr><tr>
+         <td align="center"><input type="submit" value="Agendar" style="float:center"/></td>
         </tr>
     </form>
    </table>
   </td> <!-- end of col 2 -->
 
-
+  <td> <!-- start of col 3 -->
+   <table class="subtable">
+    <form name="list_alarm" action="list_alarms.php" method="post">
+        <tr>
+	 <td>Listar SMS agendados</td>
+	</tr><tr>
+         <td align="center"><input type="submit" value="Listar" style="float:center"/></td>
+        </tr>
+    </form>
+   </table>
+  </td> <!-- end of col 3 -->
 
 
  </tr> <!-- end of line 1 -->

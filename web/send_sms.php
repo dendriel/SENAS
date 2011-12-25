@@ -27,7 +27,7 @@ $timeout = 3;
 
    <td> <!--col 1-->
       <tr>  <!--start1-->
-         <td><div class="txt_inp">Origem:<input type="text" name="orig" maxlength=10 value="<?php echo $_POST['orig'];?>"></div></td>
+         <td><div class="txt_inp">Origem:<input type="text" name="orig" maxlength=8 value="<?php echo $_POST['orig'];?>"></div></td>
       </tr> <!--end1-->
 
       <tr>  <!--start2-->
@@ -64,7 +64,7 @@ $timeout = 3;
         </tr> <!--end-->
 
         <tr><!--start5-->
-	  <td><div class="txt">Mensagem:<div style:"float:right"><textarea rows="8" cols="19" name="msg" maxlength=150><?php echo $_POST['msg'];?></textarea> <br />M&aacute;x.150 caracteres</div></div></td>
+	  <td><div class="txt">Mensagem:<div style:"float:right"><textarea rows="8" cols="19" name="msg" maxlength=149><?php echo $_POST['msg'];?></textarea> <br />M&aacute;x.149 caracteres</div></div></td>
         </tr><!--end5-->
 
         <tr><!--start6-->

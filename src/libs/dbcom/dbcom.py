@@ -165,7 +165,7 @@ class dbcom:
 				self.cursor.execute("""
 							CREATE TABLE IF NOT EXISTS %s
 							(
-								orig		CHAR(10),
+								orig		CHAR(8),
 								dest		CHAR(12),
 								msg		CHAR(150),
 								oper		INT,
