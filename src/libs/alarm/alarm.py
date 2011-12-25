@@ -17,11 +17,11 @@ class alarm:
 # when he wake up will need to send data to main system, asking for the alarm to blow.
 ##
 	def launch(self, orig, destination, content, blow, counter):
-	#def launch(self, blow):
 
 		try:
 			sleep_time = int(blow - now())
 			self.log.LOG(LOG_INFO, "alarm", "New alarm has been scheduled. Blow date/time in %s. It's take %d seconds from now." % (blow, sleep_time))
+
 			time.sleep(sleep_time)
 			
 			channel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -71,13 +71,6 @@ class alarm:
 		else:
 			sms_dict[DATA_BLOW] = ret
 
-		ret = int(self.shared.splitTag(cmsg, TAG_INFO))
-		# Operator #
-		if ret ==  NOTFOUND:
-			return NOTFOUND
-		else:
-			sms_dict[DATA_OPER] = ret
-
 		ret = self.shared.splitTag(cmsg, TAG_HOWMANY)
 		# How many destinations #
 		if ret == NOTFOUND:
@@ -92,6 +85,15 @@ class alarm:
 				return NOTFOUND
 			else:
 				sms_dict[DATA_EXT + "%d" % index] = ret
+
+		# Operator #
+		for index in range (0, sms_dict[DATA_DESTN]):
+
+			ret = self.shared.splitTag(cmsg, TAG_INFO, index)
+			if ret ==  NOTFOUND:
+				return NOTFOUND
+			else:
+				sms_dict[DATA_OPER + "%d" % index] = int(ret)
 
 		return sms_dict
 

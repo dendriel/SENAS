@@ -93,9 +93,8 @@ class dbcom:
 #	in defines.py)
 # Return: OK if the alarm was registered; ERROR
 #	if a problem has ocurred.
-# Note: The right name should be registerAlarm
 ##
-	def registerSMS(self, orig, dest, blow, oper, msg, stat):
+	def registerAlarm(self, orig, dest, blow, oper, msg, stat):
 
 		answer = self.__insert(TABLE_SMS, "(orig, dest, msg, oper, blow, stat)", "('%s', '%s', '%s', '%d', '%s', '%d')" % (orig, dest, msg, oper, blow, stat))
 		return answer

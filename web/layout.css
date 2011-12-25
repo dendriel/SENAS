@@ -30,10 +30,6 @@ font-size:16px;
 font-family:"verdana";
 text-align:center;
 }
-input
-{
-float:right;
-}
 td
 {
 text-align:center;
@@ -51,6 +47,13 @@ color:#000;
 font-size:14px;
 font-family:"verdana";
 text-align:right;
+}
+.txt_rad
+{
+color:#000;
+font-size:14px;
+font-family:"verdana";
+text-align:center;
 }
 .error
 {

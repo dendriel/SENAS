@@ -37,17 +37,8 @@ class shared:
 	
         	                if ( start <= -1 or end <= -1 ):
                 	                return NOTFOUND
-                        	else:
+				else:
                                 	return (cmsg[ (start+5):end ])
-
-			elif tag == TAG_INFO:
-                        	start = cmsg.find('\INFO:')
-	                        end = cmsg.find('/INFO')
-	
-        	                if ( start <= -1 or end <= -1 ):
-                	                return NOTFOUND
-                        	else:
-                                	return (cmsg[ (start+6):end ])
 
 			elif tag == TAG_DATA:
                         	start = cmsg.find('\DATA:')
@@ -56,7 +47,6 @@ class shared:
         	                if ( start <= -1 or end <= -1 ):
                 	                return NOTFOUND
                         	else:
-                                	print cmsg[ (start+6):end ], "lool"
                                 	return (cmsg[ (start+6):end ])
 
 			elif tag == TAG_FROM:
@@ -95,7 +85,7 @@ class shared:
                         	else:
                                 	return cmsg[ (start+6):end ]
 
-			if tag == TAG_PART:
+			elif tag == TAG_PART:
 	                        start = cmsg.find('\PART%d:' % part)
         	                end = cmsg.find('/PART%d' % part)
 	
@@ -103,8 +93,18 @@ class shared:
                 	                return NOTFOUND
                         	else:
                                 	return cmsg[ (start+7):end ]
+
+			elif tag == TAG_INFO:
+                        	start = cmsg.find('\INFO%d:' % part)
+	                        end = cmsg.find('/INFO%d' % part)
+	
+        	                if ( start <= -1 or end <= -1 ):
+                	                return NOTFOUND
+                        	else:
+                                	return (cmsg[ (start+7):end ])
 			else:
 				return ERROR
+
 		except:
 			return ERROR
 ##

@@ -185,7 +185,8 @@ class sms:
 			self.manager.actionCleanLog(self.log_path_list[ALARM_LOGNAME])
 
 		elif CMD == CMD_SEND_SMS:
-			self.manager.actionScheduleAlarm(cmsg, dbcom)
+			pass
+			#self.manager.actionScheduleAlarm(cmsg, dbcom)
 
 		else:
 			self.log.LOG(LOG_ERROR, "sms.doManagerAction()", "Received message has an invalid command: %s" % CMD)
@@ -198,17 +199,17 @@ class sms:
 
 		if CMD == CMD_LOGIN:
 			answer = self.web.ActionLogin(cmsg)
-			self.__sendMessage(client_channel, "%s" % answer)
+			self.__sendMessage(client_channel, "%s" % RETURN[answer])
 			client_channel.close()
 
 		elif CMD == CMD_SEND_SMS:
 			answer = self.manager.actionScheduleAlarm(cmsg, self.dbcom)
-			self.__sendMessage(client_channel, "%s" % answer)
+			self.__sendMessage(client_channel, "%s" % RETURN[answer])
 			client_channel.close()
 
 		else:
 			self.log.LOG(LOG_ERROR, "sms", "Error while reading web request. Unknow command: %s" % CMD)			
-			self.__sendMessage(client_channel, "%s" % NOTFOUND)
+			self.__sendMessage(client_channel, "%s" % RETURN[NOTFOUND])
 			client_channel.close()
 ##
 # Brief: Process the ALARMS requisitons.
@@ -221,6 +222,7 @@ class sms:
 			content = self.shared.splitTag(cmsg, TAG_CONTENT)
 			destination = self.shared.splitTag(cmsg, TAG_PART, 0)
 			counter = int(self.shared.splitTag(cmsg, TAG_FROM))
+
 			answer = self.gsmcom.sendSMS(destination, content)
 		
 			if answer == OK: 

@@ -28,19 +28,19 @@ class Web:
 
                                 if ret == OK:
                                         self.log.LOG(LOG_INFO, "sms", "User %s has been authenticated." % user)
-                                        return "OK"
+                                        return OK
 
                                 elif ret == INVALID:
                                         self.log.LOG(LOG_INFO, "sms", "Authetication for user \"%s\" failed. Password incorrect." % user)
-                                        return "INVALID"
+                                        return INVALID
 
                                 elif ret == ERROR:
                                         self.log.LOG(LOG_ERROR, "sms", "An error ocurred when authenticating an user.")
-                                        return "ERROR"
+                                        return ERROR
 
                                 elif ret == NOTFOUND:
                                         self.log.LOG(LOG_INFO, "sms", "Authentication for user \"%s\" failed. User doesn't exist." % user)
-                                        return "NOTFOUND"
+                                        return NOTFOUND
                                 else:
                                         self.log.LOG(LOG_ERROR, "sms.webAtcionLogin()", "Unknow answer from dbcom.validateLogin.")
 					return ERROR

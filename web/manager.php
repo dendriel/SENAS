@@ -88,7 +88,11 @@
     <form name="send_sms" action="send_sms.php" method="post">
         <tr>
 	 <td>Agendar SMS</td>
-	</tr><tr>
+	</tr>
+	<tr>
+         <td><div>Destinos:<input type="input" style="text-align:center; float:center;" name="dest_num" maxlength=2 size=1 value="1"/>
+	</tr>
+	<tr>
          <td align="center"><input type="submit" value="Agendar" style="float:center"/></td>
         </tr>
     </form>

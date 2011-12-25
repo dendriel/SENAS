@@ -35,33 +35,36 @@ class Manager:
 		activity = ACTIVE
 
 		if sms_dict == NOTFOUND:
-			self.log.LOG(LOG_ERROR, "sms.actionScheduleAlarm()", "TAGs are missing in the requisition to schedule an alarm. Aborting schedule.")
-			return "NOTFOUND"
+			self.log.LOG(LOG_ERROR, "manager", "TAGs are missing in the requisition to schedule an alarm. Aborting schedule.")
+			return NOTFOUND
 
 		blow = self.shared.mountTime(sms_dict[DATA_BLOW])
 
-
 		if blow == INVALID:
-			return "INVALID"
+			return INVALID
 
 		elif blow < now() or blow == now():
 			activity = FAILED
 
-		ret = dbcom.registerSMS(sms_dict[DATA_ORG], sms_dict[DATA_EXT+"0"], sms_dict[DATA_BLOW], sms_dict[DATA_OPER], sms_dict[DATA_MSG], activity)
+		for i in range(0, sms_dict[DATA_DESTN]):
+
+			ret = dbcom.registerAlarm(sms_dict[DATA_ORG], sms_dict[DATA_EXT+"%d" % i], sms_dict[DATA_BLOW], sms_dict[DATA_OPER+"%d" % i], sms_dict[DATA_MSG], activity)
+
+			if ret == OK and activity == ACTIVE:
+				alarm_counter = dbcom.getHigherCounter()
+				alarm_thread = Thread(target=self.alarm.launch, args=(sms_dict[DATA_ORG], sms_dict[DATA_EXT+"%d" % i], sms_dict[DATA_MSG], blow, alarm_counter,))
+				alarm_thread.start()
+				self.log.LOG(LOG_INFO, "sms", "New alarm thread has been started. Counter: %ld" % alarm_counter)
 
 		if ret == OK and activity == ACTIVE:
-			alarm_counter = dbcom.getHigherCounter()
-			alarm_thread = Thread(target=self.alarm.launch, args=(sms_dict[DATA_ORG], sms_dict[DATA_EXT+"0"], sms_dict[DATA_MSG], blow, alarm_counter,))
-			alarm_thread.start()
-			self.log.LOG(LOG_INFO, "sms", "New alarm thread has been started. Counter: %ld" % alarm_counter)
-			return "OK"
+			return OK
 
-		elif ret == NOTFOUND:
-			return "NOTFOUND"
+		if ret == NOTFOUND:
+			return NOTFOUND
 
 		elif activity == FAILED:
-			return "INVALID"
+			return INVALID
 
 		else:
-			return "ERROR"
+			return ERROR
 
